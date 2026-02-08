@@ -67,12 +67,15 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: ["http://localhost:5173", "https://smart-campus-commute.vercel.app"],
         methods: ["GET", "POST"]
     }
 });
 
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:5173", "https://smart-campus-commute.vercel.app"],
+    credentials: true
+}));
 app.use(express.json());
 
 app.use('/uploads', express.static('uploads'));

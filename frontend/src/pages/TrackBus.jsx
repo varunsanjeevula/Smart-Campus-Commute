@@ -23,7 +23,7 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const ENDPOINT = 'http://localhost:5000'; // Socket Server URL
+const ENDPOINT = import.meta.env.VITE_API_URL || 'http://localhost:5000'; // Socket Server URL
 
 const RecenterMap = ({ lat, lng }) => {
     const map = useMap();

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../utils/api';
+import api, { API_BASE } from '../utils/api';
 import { ArrowLeft, Search, CheckCircle, Clock, AlertTriangle, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -140,12 +140,13 @@ const TrackComplaint = () => {
                                     <h4 className="font-bold text-dark mb-3 sm:mb-4 text-sm sm:text-base">Attached Evidence</h4>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                         {complaint.media.map((file, i) => (
-                                            <a key={i} href={`http://localhost:5000${file}`} target="_blank" rel="noopener noreferrer" className="block relative group overflow-hidden rounded-xl border border-gray-200">
-                                                {file.match(/\.(mp4|mov|avi)$/i) ? (
-                                                    <div className="bg-gray-100 h-32 flex items-center justify-center text-gray-400">VIDEO</div>
-                                                ) : (
-                                                    <img src={`http://localhost:5000${file}`} alt="Evidence" className="w-full h-32 object-cover group-hover:scale-105 transition-transform" />
-                                                )}
+                                            <a key={i} href={`${API_BASE}${file}`} target="_blank" rel="noopener noreferrer" className="block relative group overflow-hidden rounded-xl border border-gray-200">
+                                                {
+                                                    file.match(/\.(mp4|mov|avi)$/i) ? (
+                                                        <div className="bg-gray-100 h-32 flex items-center justify-center text-gray-400">VIDEO</div>
+                                                    ) : (
+                                                        <img src={`${API_BASE}${file}`} alt="Evidence" className="w-full h-32 object-cover group-hover:scale-105 transition-transform" />
+                                                    )}
                                             </a>
                                         ))}
                                     </div>
@@ -155,7 +156,7 @@ const TrackComplaint = () => {
                     </motion.div>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import io from 'socket.io-client';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import api from '../utils/api';
+import api, { API_BASE } from '../utils/api';
 import ComplaintForm from '../components/ComplaintForm';
 import RatingModal from '../components/RatingModal';
 import { ArrowLeft, Navigation, Gauge, Clock, AlertTriangle, X, User, Star, MapPin } from 'lucide-react';
@@ -23,7 +23,7 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const ENDPOINT = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const ENDPOINT = API_BASE;
 
 const RecenterMap = ({ lat, lng }) => {
     const map = useMap();

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../utils/api';
+import api, { API_BASE } from '../../utils/api';
 import { AlertCircle, CheckCircle } from 'lucide-react';
 
 const ComplaintManagement = () => {
@@ -58,7 +58,7 @@ const ComplaintManagement = () => {
                                     </td>
                                     <td className="py-4">
                                         {c.media && c.media.length > 0 ? (
-                                            <a href={`http://localhost:5000${c.media[0]}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline text-sm">View ({c.media.length})</a>
+                                            <a href={`${API_BASE}${c.media[0]}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline text-sm">View ({c.media.length})</a>
                                         ) : <span className="text-gray-400 text-sm">None</span>}
                                     </td>
                                     <td className="py-4">

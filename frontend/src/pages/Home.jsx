@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { Search, MapPin, Navigation, Clock, Wifi } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Search, MapPin, Navigation, Clock, Wifi, X, ScanLine } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { X } from 'lucide-react';
+import { Html5Qrcode } from 'html5-qrcode';
 import QRCode from 'react-qr-code';
 
 const BusCardSkeleton = () => (
@@ -26,6 +25,8 @@ const Home = () => {
     const [scannedBus, setScannedBus] = useState(null);
     const [showQRModal, setShowQRModal] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [scannerError, setScannerError] = useState(null);
+    const scannerRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,35 +43,74 @@ const Home = () => {
         fetchBuses();
     }, []);
 
-    // QR Scanner Logic
+    // QR Scanner — auto-select back camera, no UI dropdown
     useEffect(() => {
-        if (showScanner) {
-            const scanner = new Html5QrcodeScanner(
-                "reader",
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                false
-            );
+        if (!showScanner) return;
 
-            scanner.render(async (decodedText) => {
-                scanner.clear();
-                setShowScanner(false);
+        setScannerError(null);
+        let html5Qr = null;
 
-                const foundBus = buses.find(b => b.busNumber === decodedText || b._id === decodedText);
+        const startScanner = async () => {
+            try {
+                html5Qr = new Html5Qrcode("qr-reader-container");
+                scannerRef.current = html5Qr;
 
-                if (foundBus) {
-                    setScannedBus(foundBus);
-                } else {
-                    alert(`Bus not found for QR Code: ${decodedText}`);
-                }
-            }, (error) => {
-                console.warn(error);
-            });
+                await html5Qr.start(
+                    { facingMode: "environment" }, // auto-select back camera
+                    {
+                        fps: 15,
+                        qrbox: { width: 250, height: 250 },
+                        aspectRatio: 1.0,
+                        disableFlip: false,
+                    },
+                    (decodedText) => {
+                        // Success
+                        html5Qr.stop().then(() => {
+                            html5Qr.clear();
+                            scannerRef.current = null;
+                            setShowScanner(false);
 
-            return () => {
-                scanner.clear().catch(error => console.error("Failed to clear scanner", error));
-            };
-        }
+                            const foundBus = buses.find(b => b.busNumber === decodedText || b._id === decodedText);
+                            if (foundBus) {
+                                setScannedBus(foundBus);
+                            } else {
+                                alert(`Bus not found for QR Code: ${decodedText}`);
+                            }
+                        }).catch(console.error);
+                    },
+                    () => { } // Ignore scan errors (no QR found yet)
+                );
+            } catch (err) {
+                console.error("Camera error:", err);
+                setScannerError("Unable to access camera. Please allow camera permissions.");
+            }
+        };
+
+        startScanner();
+
+        return () => {
+            if (scannerRef.current) {
+                scannerRef.current.stop().then(() => {
+                    scannerRef.current.clear();
+                    scannerRef.current = null;
+                }).catch(() => { });
+            }
+        };
     }, [showScanner, buses]);
+
+    const closeScanner = () => {
+        if (scannerRef.current) {
+            scannerRef.current.stop().then(() => {
+                scannerRef.current.clear();
+                scannerRef.current = null;
+                setShowScanner(false);
+            }).catch(() => {
+                setShowScanner(false);
+            });
+        } else {
+            setShowScanner(false);
+        }
+    };
 
     const handleTrack = (busId) => {
         navigate(`/track/${busId}`);
@@ -163,21 +203,90 @@ const Home = () => {
                 </div>
             )}
 
-            {/* QR Scanner Modal */}
-            {showScanner && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-                    <div className="bg-white rounded-2xl overflow-hidden w-full max-w-md relative">
-                        <button
-                            onClick={() => setShowScanner(false)}
-                            className="absolute top-3 right-3 z-10 bg-white/20 p-2 rounded-full text-white hover:bg-white/40 backdrop-blur-md min-w-[44px] min-h-[44px] flex items-center justify-center"
-                        >
-                            <X size={20} />
-                        </button>
-                        <div id="reader" className="w-full"></div>
-                        <p className="text-center py-4 text-gray-500 font-medium">Point camera at a Bus QR Code</p>
-                    </div>
-                </div>
-            )}
+            {/* QR Scanner — Professional Full-Screen Overlay */}
+            <AnimatePresence>
+                {showScanner && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[70] bg-black flex flex-col"
+                    >
+                        {/* Scanner Header */}
+                        <div className="relative z-10 flex items-center justify-between px-4 py-4 bg-gradient-to-b from-black/80 to-transparent">
+                            <div>
+                                <h3 className="text-white font-bold text-lg">Scan QR Code</h3>
+                                <p className="text-white/60 text-xs">Point at a bus QR code</p>
+                            </div>
+                            <button
+                                onClick={closeScanner}
+                                className="bg-white/10 backdrop-blur-md p-2.5 rounded-full text-white hover:bg-white/20 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                            >
+                                <X size={22} />
+                            </button>
+                        </div>
+
+                        {/* Camera Viewfinder */}
+                        <div className="flex-1 relative flex items-center justify-center overflow-hidden">
+                            {/* Actual camera feed renders here */}
+                            <div id="qr-reader-container" className="absolute inset-0 [&_video]:w-full [&_video]:h-full [&_video]:object-cover" />
+
+                            {/* Viewfinder Overlay */}
+                            <div className="absolute inset-0 pointer-events-none z-10">
+                                {/* Dim edges around scan box */}
+                                <div className="absolute inset-0 bg-black/50" style={{
+                                    maskImage: 'radial-gradient(ellipse 200px 200px at center, transparent 60%, black 61%)',
+                                    WebkitMaskImage: 'radial-gradient(ellipse 200px 200px at center, transparent 60%, black 61%)'
+                                }} />
+
+                                {/* Scan box corners */}
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px]">
+                                    {/* Top-left */}
+                                    <div className="absolute top-0 left-0 w-10 h-10 border-t-[3px] border-l-[3px] border-white rounded-tl-xl" />
+                                    {/* Top-right */}
+                                    <div className="absolute top-0 right-0 w-10 h-10 border-t-[3px] border-r-[3px] border-white rounded-tr-xl" />
+                                    {/* Bottom-left */}
+                                    <div className="absolute bottom-0 left-0 w-10 h-10 border-b-[3px] border-l-[3px] border-white rounded-bl-xl" />
+                                    {/* Bottom-right */}
+                                    <div className="absolute bottom-0 right-0 w-10 h-10 border-b-[3px] border-r-[3px] border-white rounded-br-xl" />
+
+                                    {/* Animated scan line */}
+                                    <motion.div
+                                        className="absolute left-2 right-2 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent"
+                                        animate={{ top: ['10%', '90%', '10%'] }}
+                                        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Error message */}
+                            {scannerError && (
+                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 p-6">
+                                    <div className="text-center">
+                                        <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <X size={32} className="text-red-400" />
+                                        </div>
+                                        <h4 className="text-white font-bold text-lg mb-2">Camera Error</h4>
+                                        <p className="text-white/60 text-sm mb-6">{scannerError}</p>
+                                        <button
+                                            onClick={closeScanner}
+                                            className="bg-white text-black px-6 py-3 rounded-xl font-bold min-h-[48px]"
+                                        >
+                                            Go Back
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Scanner Footer */}
+                        <div className="relative z-10 px-6 py-6 bg-gradient-to-t from-black/80 to-transparent text-center">
+                            <p className="text-white/80 text-sm font-medium mb-1">Align QR code within the frame</p>
+                            <p className="text-white/40 text-xs">Scanning will happen automatically</p>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Hero Section */}
             <div className="relative bg-dark text-white overflow-hidden pb-12 sm:pb-20 pt-20 sm:pt-24">

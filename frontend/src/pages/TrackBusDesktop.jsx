@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import ComplaintForm from '../../components/ComplaintForm';
-import RatingModal from '../../components/RatingModal';
+import ComplaintForm from '../components/ComplaintForm';
+import RatingModal from '../components/RatingModal';
 import { ArrowLeft, Navigation, Gauge, Clock, AlertTriangle, X, User, Star, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';

@@ -102,9 +102,9 @@ const TrackBus = () => {
     );
 
     return (
-        <div className="relative h-[calc(100vh-64px)] w-full overflow-hidden bg-gray-100">
-            {/* Map */}
-            <MapContainer center={[location.lat, location.lng]} zoom={15} scrollWheelZoom={true} className="h-full w-full z-0">
+        <div style={{ position: 'relative', width: '100%', height: '100dvh', overflow: 'hidden', background: '#f3f4f6' }}>
+            {/* Map — fills entire screen */}
+            <MapContainer center={[location.lat, location.lng]} zoom={15} scrollWheelZoom={true} style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, zIndex: 0 }}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -121,103 +121,120 @@ const TrackBus = () => {
             </MapContainer>
 
             {/* Back Button */}
-            <Link to="/" className="absolute top-4 left-3 sm:left-4 z-[400] bg-white p-2.5 sm:p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors text-gray-700 min-w-[44px] min-h-[44px] flex items-center justify-center">
+            <Link to="/" style={{ position: 'absolute', top: '16px', left: '12px', zIndex: 400, background: '#fff', padding: '10px', borderRadius: '50%', boxShadow: '0 2px 12px rgba(0,0,0,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', color: '#374151', textDecoration: 'none' }}>
                 <ArrowLeft size={22} />
             </Link>
 
             {/* Floating Action Button for Complaints */}
             <button
                 onClick={() => setIsComplaintOpen(true)}
-                className="md:hidden absolute top-4 right-3 z-[400] bg-red-500 text-white p-3 rounded-full shadow-lg hover:bg-red-600 transition-colors min-w-[48px] min-h-[48px] flex items-center justify-center"
+                className="md:hidden"
+                style={{ position: 'absolute', top: '16px', right: '12px', zIndex: 400, background: '#ef4444', color: '#fff', padding: '12px', borderRadius: '50%', boxShadow: '0 2px 12px rgba(0,0,0,0.2)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', cursor: 'pointer' }}
                 title="Report Issue"
             >
                 <AlertTriangle size={20} />
             </button>
 
-            {/* Bus Info Card */}
+            {/* Bus Info Card — Bottom Sheet */}
             <motion.div
                 initial={{ y: 200, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                className="absolute bottom-0 left-0 right-0 md:left-8 md:bottom-8 md:w-96 md:rounded-3xl bg-white/95 backdrop-blur-xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[400] border-t md:border border-white/50 max-h-[55vh] md:max-h-[60vh] overflow-y-auto rounded-t-3xl"
+                style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 400,
+                    background: 'rgba(255,255,255,0.97)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '24px 24px 0 0',
+                    boxShadow: '0 -10px 40px rgba(0,0,0,0.1)',
+                    maxHeight: '40vh',
+                    overflowY: 'auto',
+                }}
+                className="md:left-8 md:bottom-8 md:w-96 md:rounded-3xl md:max-h-[60vh]"
             >
                 {/* Drag Handle (mobile only) */}
-                <div className="md:hidden flex items-center justify-center pt-3 pb-1">
-                    <div className="w-10 h-1 bg-gray-300 rounded-full" />
+                <div className="md:hidden" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '10px', paddingBottom: '4px' }}>
+                    <div style={{ width: '40px', height: '4px', background: '#d1d5db', borderRadius: '9999px' }} />
                 </div>
 
-                <div className="p-4 sm:p-6">
+                <div style={{ padding: '16px' }}>
                     {/* Header */}
-                    <div className="flex justify-between items-start mb-4 sm:mb-6">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                         <div>
-                            <h2 className="text-xl sm:text-2xl font-bold text-dark">{bus?.busNumber}</h2>
-                            <p className="text-gray-500 font-medium text-xs sm:text-sm flex items-center gap-1">
-                                <Navigation size={12} className="sm:w-[14px] sm:h-[14px]" /> {bus?.route}
+                            <h2 style={{ fontSize: '20px', fontWeight: 700, margin: 0, color: '#1e293b' }}>{bus?.busNumber}</h2>
+                            <p style={{ color: '#6b7280', fontSize: '12px', margin: '4px 0 0', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <Navigation size={12} /> {bus?.route}
                             </p>
                         </div>
-                        <div className="bg-green-100 text-green-700 px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase animate-pulse">
+                        <div style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '9999px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', animation: 'pulse 2s infinite' }}>
                             Live
                         </div>
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-                        <div className="bg-blue-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center gap-1 border border-blue-100">
-                            <Gauge size={20} className="text-primary mb-0.5 sm:mb-1 sm:w-6 sm:h-6" />
-                            <span className="text-xl sm:text-2xl font-bold text-dark">{location.speed || 0}</span>
-                            <span className="text-[10px] sm:text-xs text-gray-500 uppercase font-bold">km/h</span>
+                    {/* Stats — compact row */}
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                        <div style={{ flex: 1, background: '#eff6ff', padding: '10px', borderRadius: '12px', textAlign: 'center', border: '1px solid #dbeafe' }}>
+                            <Gauge size={16} style={{ color: '#3b82f6', margin: '0 auto 4px' }} />
+                            <div style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>{location.speed || 0}</div>
+                            <div style={{ fontSize: '9px', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>km/h</div>
                         </div>
-                        <div className="bg-purple-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center gap-1 border border-purple-100">
-                            <Clock size={20} className="text-secondary mb-0.5 sm:mb-1 sm:w-6 sm:h-6" />
-                            <span className="text-xl sm:text-2xl font-bold text-dark">{eta || '--'}</span>
-                            <span className="text-[10px] sm:text-xs text-gray-500 uppercase font-bold">ETA</span>
+                        <div style={{ flex: 1, background: '#faf5ff', padding: '10px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e9d5ff' }}>
+                            <Clock size={16} style={{ color: '#8b5cf6', margin: '0 auto 4px' }} />
+                            <div style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b' }}>{eta || '--'}</div>
+                            <div style={{ fontSize: '9px', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>ETA</div>
                         </div>
-                        <div className="col-span-2 bg-orange-50 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl flex items-center justify-between px-4 sm:px-6 border border-orange-100">
-                            <span className="text-[10px] sm:text-xs text-gray-500 uppercase font-bold">Distance</span>
-                            <span className="text-base sm:text-lg font-bold text-orange-600">~{location.speed ? (15 - (location.speed * 0.1)).toFixed(1) : '12.5'} km</span>
+                        <div style={{ flex: 1, background: '#fff7ed', padding: '10px', borderRadius: '12px', textAlign: 'center', border: '1px solid #fed7aa' }}>
+                            <MapPin size={16} style={{ color: '#ea580c', margin: '0 auto 4px' }} />
+                            <div style={{ fontSize: '14px', fontWeight: 700, color: '#ea580c' }}>~{location.speed ? (15 - (location.speed * 0.1)).toFixed(1) : '12.5'}</div>
+                            <div style={{ fontSize: '9px', color: '#6b7280', fontWeight: 700, textTransform: 'uppercase' }}>km</div>
                         </div>
                     </div>
 
-                    {/* Driver Info */}
-                    <div className="mb-4 sm:mb-6 bg-gray-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-gray-100 flex items-center gap-3 sm:gap-4">
+                    {/* Driver Info — compact */}
+                    <div style={{ background: '#f9fafb', padding: '12px', borderRadius: '12px', border: '1px solid #f3f4f6', display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                         <img
                             src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100&h=100&fit=crop"
                             alt="Driver"
-                            className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-white shadow-md"
+                            style={{ width: '44px', height: '44px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}
                         />
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1 gap-2">
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-[10px] sm:text-xs text-gray-400 font-bold uppercase">Driver</p>
-                                    <p className="font-bold text-dark text-base sm:text-lg truncate">{bus?.driverId?.name || 'Unknown Driver'}</p>
-                                </div>
-                                <div className="flex items-center gap-1 bg-yellow-100 px-2 py-1 rounded-lg shrink-0">
-                                    <Star size={12} className="text-yellow-600 fill-current sm:w-[14px] sm:h-[14px]" />
-                                    <span className="text-[10px] sm:text-xs font-bold text-yellow-700">
-                                        {bus?.driverId?.rating ? bus.driverId.rating.toFixed(1) : 'New'}
-                                    </span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => setIsRatingOpen(true)}
-                                className="text-xs font-bold text-primary hover:underline min-h-[32px] flex items-center"
-                            >
-                                Rate Driver
-                            </button>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <p style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 700, textTransform: 'uppercase', margin: 0 }}>Driver</p>
+                            <p style={{ fontWeight: 700, fontSize: '14px', color: '#1e293b', margin: '2px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{bus?.driverId?.name || 'Mock Driver'}</p>
                         </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#fef9c3', padding: '4px 8px', borderRadius: '8px', flexShrink: 0 }}>
+                            <Star size={12} style={{ color: '#ca8a04' }} fill="#ca8a04" />
+                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#a16207' }}>{bus?.driverId?.rating ? bus.driverId.rating.toFixed(1) : '5.0'}</span>
+                        </div>
+                        <button
+                            onClick={() => setIsRatingOpen(true)}
+                            style={{ fontSize: '11px', fontWeight: 700, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, padding: '8px 4px' }}
+                        >
+                            Rate
+                        </button>
                     </div>
 
                     {/* Route Stops */}
-                    <div className="mb-4 sm:mb-6">
-                        <h4 className="font-bold text-dark mb-3 flex items-center gap-2 text-sm sm:text-base">
-                            <MapPin size={14} className="text-gray-400 sm:w-4 sm:h-4" /> Route & ETAs
+                    <div style={{ marginBottom: '12px' }}>
+                        <h4 style={{ fontWeight: 700, color: '#1e293b', margin: '0 0 10px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <MapPin size={14} style={{ color: '#9ca3af' }} /> Route & ETAs
                         </h4>
-                        <div className="relative pl-4 border-l-2 border-gray-200 space-y-4 sm:space-y-6">
+                        <div style={{ position: 'relative', paddingLeft: '16px', borderLeft: '2px solid #e5e7eb' }}>
                             {stops.map((stop, i) => (
-                                <div key={i} className="relative pl-5 sm:pl-6">
-                                    <div className={`absolute -left-[11px] top-1 w-5 h-5 rounded-full border-4 ${i === 0 ? 'bg-primary border-white ring-2 ring-primary' : 'bg-white border-gray-300'}`}></div>
-                                    <div className="flex justify-between items-center gap-2">
-                                        <p className={`text-xs sm:text-sm ${i === 0 ? 'font-bold text-dark' : 'text-gray-600'}`}>{stop}</p>
-                                        <span className={`text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md shrink-0 ${i === 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                                <div key={i} style={{ position: 'relative', paddingLeft: '20px', marginBottom: i < stops.length - 1 ? '12px' : 0 }}>
+                                    <div style={{
+                                        position: 'absolute', left: '-11px', top: '2px', width: '18px', height: '18px', borderRadius: '50%',
+                                        border: i === 0 ? '3px solid #3b82f6' : '3px solid #d1d5db',
+                                        background: i === 0 ? '#3b82f6' : '#fff',
+                                    }} />
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                                        <p style={{ fontSize: '12px', fontWeight: i === 0 ? 700 : 400, color: i === 0 ? '#1e293b' : '#6b7280', margin: 0 }}>{stop}</p>
+                                        <span style={{
+                                            fontSize: '10px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px', flexShrink: 0,
+                                            background: i === 0 ? '#dcfce7' : '#f3f4f6',
+                                            color: i === 0 ? '#15803d' : '#6b7280',
+                                        }}>
                                             {i === 0 ? 'Arrived' : `+${i * 15} min`}
                                         </span>
                                     </div>
@@ -226,10 +243,11 @@ const TrackBus = () => {
                         </div>
                     </div>
 
-                    {/* Report Issue - hidden on mobile (FAB replaces it) */}
+                    {/* Report Issue - desktop only */}
                     <button
                         onClick={() => setIsComplaintOpen(true)}
-                        className="hidden md:flex w-full bg-red-50 text-red-500 py-4 rounded-2xl font-bold hover:bg-red-100 transition-colors items-center justify-center gap-2 border border-red-100 min-h-[48px]"
+                        className="hidden md:flex"
+                        style={{ width: '100%', background: '#fef2f2', color: '#ef4444', padding: '14px', borderRadius: '16px', fontWeight: 700, border: '1px solid #fecaca', display: 'none', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer', minHeight: '48px' }}
                     >
                         <AlertTriangle size={18} /> Report Incident
                     </button>

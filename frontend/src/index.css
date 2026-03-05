@@ -76,3 +76,37 @@ h6 {
 ::-webkit-scrollbar-thumb:hover {
   background: #94A3B8;
 }
+
+/* Mobile: thinner scrollbar */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
+/* Safe area padding for notched devices */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Space for fixed bottom nav on mobile */
+.has-bottom-nav {
+  padding-bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+  .has-bottom-nav {
+    padding-bottom: 0;
+  }
+}
+
+/* Remove tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}

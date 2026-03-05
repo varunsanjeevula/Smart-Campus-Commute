@@ -8,12 +8,24 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import { X } from 'lucide-react';
 import QRCode from 'react-qr-code';
 
+const BusCardSkeleton = () => (
+    <div className="bg-white rounded-xl p-5 border border-gray-100 animate-pulse">
+        <div className="flex justify-between items-center mb-3">
+            <div className="h-5 w-20 skeleton rounded" />
+            <div className="h-5 w-16 skeleton rounded-full" />
+        </div>
+        <div className="h-10 w-full skeleton rounded-lg mb-4" />
+        <div className="h-9 w-full skeleton rounded-lg" />
+    </div>
+);
+
 const Home = () => {
     const [buses, setBuses] = useState([]);
     const [search, setSearch] = useState('');
     const [showScanner, setShowScanner] = useState(false);
     const [scannedBus, setScannedBus] = useState(null);
     const [showQRModal, setShowQRModal] = useState(null);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,6 +35,8 @@ const Home = () => {
                 setBuses(data);
             } catch (error) {
                 console.error("Error fetching buses", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchBuses();
@@ -38,11 +52,9 @@ const Home = () => {
             );
 
             scanner.render(async (decodedText) => {
-                // Success Callback
                 scanner.clear();
                 setShowScanner(false);
 
-                // Assuming decodedText is the busNumber or ID
                 const foundBus = buses.find(b => b.busNumber === decodedText || b._id === decodedText);
 
                 if (foundBus) {
@@ -51,7 +63,6 @@ const Home = () => {
                     alert(`Bus not found for QR Code: ${decodedText}`);
                 }
             }, (error) => {
-                // Error Callback (ignore for scanning in progress)
                 console.warn(error);
             });
 
@@ -73,12 +84,12 @@ const Home = () => {
                     <motion.div
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm relative flex flex-col items-center"
+                        className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-sm relative flex flex-col items-center"
                         onClick={e => e.stopPropagation()}
                     >
                         <button
                             onClick={() => setShowQRModal(null)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 p-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
                         >
                             <X size={20} />
                         </button>
@@ -89,7 +100,7 @@ const Home = () => {
                         <div className="p-4 bg-white rounded-xl border border-gray-100 shadow-inner">
                             <QRCode
                                 value={showQRModal.busNumber}
-                                size={200}
+                                size={180}
                                 level="H"
                             />
                         </div>
@@ -112,7 +123,7 @@ const Home = () => {
                     >
                         <button
                             onClick={() => setScannedBus(null)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+                            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 p-1 min-w-[44px] min-h-[44px] flex items-center justify-center"
                         >
                             <X size={20} />
                         </button>
@@ -143,7 +154,7 @@ const Home = () => {
                                 setScannedBus(null);
                                 handleTrack(scannedBus.busNumber);
                             }}
-                            className="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-indigo-600 transition-colors flex items-center justify-center gap-2"
+                            className="w-full bg-primary text-white py-3 rounded-xl font-bold hover:bg-indigo-600 transition-colors flex items-center justify-center gap-2 min-h-[48px]"
                         >
                             <Navigation size={18} />
                             Track Live Location
@@ -158,7 +169,7 @@ const Home = () => {
                     <div className="bg-white rounded-2xl overflow-hidden w-full max-w-md relative">
                         <button
                             onClick={() => setShowScanner(false)}
-                            className="absolute top-4 right-4 z-10 bg-white/20 p-2 rounded-full text-white hover:bg-white/40 backdrop-blur-md"
+                            className="absolute top-3 right-3 z-10 bg-white/20 p-2 rounded-full text-white hover:bg-white/40 backdrop-blur-md min-w-[44px] min-h-[44px] flex items-center justify-center"
                         >
                             <X size={20} />
                         </button>
@@ -169,10 +180,10 @@ const Home = () => {
             )}
 
             {/* Hero Section */}
-            <div className="relative bg-dark text-white overflow-hidden pb-20 pt-24">
+            <div className="relative bg-dark text-white overflow-hidden pb-12 sm:pb-20 pt-20 sm:pt-24">
                 <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-                    <div className="absolute top-[-20%] left-[20%] w-[800px] h-[800px] rounded-full bg-secondary/30 blur-3xl animate-blob"></div>
-                    <div className="absolute bottom-[-20%] right-[10%] w-[600px] h-[600px] rounded-full bg-primary/40 blur-3xl animate-blob animation-delay-2000"></div>
+                    <div className="absolute top-[-20%] left-[20%] w-[400px] sm:w-[800px] h-[400px] sm:h-[800px] rounded-full bg-secondary/30 blur-3xl animate-blob"></div>
+                    <div className="absolute bottom-[-20%] right-[10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] rounded-full bg-primary/40 blur-3xl animate-blob animation-delay-2000"></div>
                 </div>
 
                 <div className="container mx-auto px-4 relative z-10 text-center">
@@ -181,13 +192,13 @@ const Home = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <h1 className="text-5xl md:text-7xl font-bold mb-8 heading-font leading-tight tracking-tight">
+                        <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold mb-4 sm:mb-8 heading-font leading-tight tracking-tight">
                             Smart Campus Commute <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
                                 Real-Time Tracking
                             </span>
                         </h1>
-                        <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-12 font-light">
+                        <p className="text-sm sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-8 sm:mb-12 font-light px-2">
                             Experience seamless transit with our advanced tracking system. Know your bus location, estimated arrival, and route details instantly.
                         </p>
                     </motion.div>
@@ -199,103 +210,108 @@ const Home = () => {
                         transition={{ delay: 0.3, duration: 0.5 }}
                         className="relative max-w-2xl mx-auto"
                     >
-                        <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none text-gray-400">
-                            <Search size={22} />
+                        <div className="absolute inset-y-0 left-4 sm:left-6 flex items-center pointer-events-none text-gray-400">
+                            <Search size={20} className="sm:w-[22px] sm:h-[22px]" />
                         </div>
                         <input
                             type="text"
-                            placeholder="Find your bus (e.g., Loop 1, Bus 42)..."
-                            className="w-full pl-16 pr-16 py-5 rounded-2xl text-lg text-gray-800 focus:outline-none focus:ring-4 focus:ring-secondary/50 shadow-2xl bg-white/95 backdrop-blur-sm border border-white/20"
+                            placeholder="Find your bus..."
+                            className="w-full pl-12 sm:pl-16 pr-14 sm:pr-16 py-4 sm:py-5 rounded-xl sm:rounded-2xl text-base sm:text-lg text-gray-800 focus:outline-none focus:ring-4 focus:ring-secondary/50 shadow-2xl bg-white/95 backdrop-blur-sm border border-white/20"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
                         <button
-                            className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-dark transition-colors"
+                            className="absolute inset-y-0 right-3 sm:right-4 flex items-center text-gray-400 hover:text-dark transition-colors p-1 min-w-[44px] min-h-[44px] justify-center"
                             onClick={() => setShowScanner(true)}
                             title="Scan QR Code"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1" /><rect width="5" height="5" x="16" y="3" rx="1" /><rect width="5" height="5" x="3" y="16" rx="1" /><path d="M21 16h-3a2 2 0 0 0-2 2v3" /><path d="M21 21v.01" /><path d="M12 7v3a2 2 0 0 1-2 2H7" /><path d="M3 12h.01" /><path d="M12 3h.01" /><path d="M12 16v.01" /><path d="M16 12h1" /><path d="M21 12v.01" /><path d="M12 21v-1" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1" /><rect width="5" height="5" x="16" y="3" rx="1" /><rect width="5" height="5" x="3" y="16" rx="1" /><path d="M21 16h-3a2 2 0 0 0-2 2v3" /><path d="M21 21v.01" /><path d="M12 7v3a2 2 0 0 1-2 2H7" /><path d="M3 12h.01" /><path d="M12 3h.01" /><path d="M12 16v.01" /><path d="M16 12h1" /><path d="M21 12v.01" /><path d="M12 21v-1" /></svg>
                         </button>
                     </motion.div>
                 </div>
             </div>
 
             {/* Bus Grid */}
-            <div className="container mx-auto px-4 py-16">
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-2xl font-bold text-dark">Available Buses</h2>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Wifi size={16} className="text-green-500 animate-pulse" />
-                        Live Updates Active
+            <div className="container mx-auto px-3 sm:px-4 py-8 sm:py-16">
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
+                    <h2 className="text-xl sm:text-2xl font-bold text-dark">Available Buses</h2>
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-500">
+                        <Wifi size={14} className="text-green-500 animate-pulse sm:w-4 sm:h-4" />
+                        <span className="hidden xs:inline">Live Updates</span>
+                        <span className="xs:hidden">Live</span>
                     </div>
                 </div>
 
-                <div className="flex justify-center gap-4 mt-8">
-                    <div className="flex items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm"
+                <div className="flex justify-center gap-4 mb-6 sm:mb-0 sm:mt-0">
+                    <div className="flex items-center gap-2 text-gray-500 hover:text-gray-700 transition-colors cursor-pointer bg-gray-100 px-4 py-2.5 rounded-full"
                         onClick={() => navigate('/complaint-status')}
                     >
                         <span className="text-sm font-medium">✨ Track a Complaint</span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {buses.filter(b => {
-                        const term = search.toLowerCase();
-                        const num = b.busNumber?.toLowerCase() || '';
-                        const route = b.route?.toLowerCase() || '';
-                        return num.includes(term) || route.includes(term);
-                    }).map((bus, index) => (
-                        <motion.div
-                            key={bus._id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            className="bg-gradient-to-br from-white to-blue-50/50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-blue-100/50 overflow-hidden group flex flex-col p-5 hover:border-blue-200 relative"
-                        >
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowQRModal(bus);
-                                }}
-                                className="absolute top-2 right-2 text-gray-300 hover:text-gray-600 transition-colors bg-white/50 p-1.5 rounded-lg hover:bg-white"
-                                title="Show QR Code"
+                {loading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-6">
+                        {[...Array(6)].map((_, i) => <BusCardSkeleton key={i} />)}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-6">
+                        {buses.filter(b => {
+                            const term = search.toLowerCase();
+                            const num = b.busNumber?.toLowerCase() || '';
+                            const route = b.route?.toLowerCase() || '';
+                            return num.includes(term) || route.includes(term);
+                        }).map((bus, index) => (
+                            <motion.div
+                                key={bus._id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                className="bg-gradient-to-br from-white to-blue-50/50 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-blue-100/50 overflow-hidden group flex flex-col p-4 sm:p-5 hover:border-blue-200 relative active:scale-[0.98]"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1" /><rect width="5" height="5" x="16" y="3" rx="1" /><rect width="5" height="5" x="3" y="16" rx="1" /><path d="M21 16h-3a2 2 0 0 0-2 2v3" /><path d="M21 21v.01" /><path d="M12 7v3a2 2 0 0 1-2 2H7" /><path d="M3 12h.01" /><path d="M12 3h.01" /><path d="M12 16v.01" /><path d="M16 12h1" /><path d="M21 12v.01" /><path d="M12 21v-1" /></svg>
-                            </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowQRModal(bus);
+                                    }}
+                                    className="absolute top-2 right-2 text-gray-300 hover:text-gray-600 transition-colors bg-white/50 p-2 rounded-lg hover:bg-white min-w-[40px] min-h-[40px] flex items-center justify-center"
+                                    title="Show QR Code"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1" /><rect width="5" height="5" x="16" y="3" rx="1" /><rect width="5" height="5" x="3" y="16" rx="1" /><path d="M21 16h-3a2 2 0 0 0-2 2v3" /><path d="M21 21v.01" /><path d="M12 7v3a2 2 0 0 1-2 2H7" /><path d="M3 12h.01" /><path d="M12 3h.01" /><path d="M12 16v.01" /><path d="M16 12h1" /><path d="M21 12v.01" /><path d="M12 21v-1" /></svg>
+                                </button>
 
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="text-lg font-bold text-gray-800 group-hover:text-primary transition-colors">{bus.busNumber}</h3>
-                                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${bus.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
-                                    <div className={`w-1.5 h-1.5 rounded-full ${bus.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
-                                    {bus.status}
+                                <div className="flex justify-between items-center mb-3 pr-10">
+                                    <h3 className="text-base sm:text-lg font-bold text-gray-800 group-hover:text-primary transition-colors">{bus.busNumber}</h3>
+                                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${bus.status === 'active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'}`}>
+                                        <div className={`w-1.5 h-1.5 rounded-full ${bus.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
+                                        {bus.status}
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="flex items-center gap-2 text-gray-500 mb-4 bg-white/60 px-3 py-2 rounded-lg border border-blue-50">
-                                <MapPin size={14} className="text-indigo-400 shrink-0" />
-                                <span className="text-xs font-semibold text-gray-600 line-clamp-1" title={bus.route}>
-                                    {bus.route.split(' to ').join(' ➝ ')}
-                                </span>
-                            </div>
+                                <div className="flex items-center gap-2 text-gray-500 mb-4 bg-white/60 px-3 py-2 rounded-lg border border-blue-50">
+                                    <MapPin size={14} className="text-indigo-400 shrink-0" />
+                                    <span className="text-xs font-semibold text-gray-600 line-clamp-1" title={bus.route}>
+                                        {bus.route.split(' to ').join(' ➝ ')}
+                                    </span>
+                                </div>
 
-                            <button
-                                onClick={() => handleTrack(bus.busNumber)}
-                                className="mt-auto w-full flex items-center justify-center gap-2 bg-white text-gray-600 py-2.5 rounded-lg font-semibold text-xs border border-blue-100 shadow-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 group-hover:shadow-blue-100"
-                            >
-                                <Navigation size={14} />
-                                Track Live
-                            </button>
-                        </motion.div>
-                    ))}
+                                <button
+                                    onClick={() => handleTrack(bus.busNumber)}
+                                    className="mt-auto w-full flex items-center justify-center gap-2 bg-white text-gray-600 py-3 sm:py-2.5 rounded-lg font-semibold text-xs border border-blue-100 shadow-sm hover:bg-primary hover:text-white hover:border-primary transition-all duration-200 group-hover:shadow-blue-100 min-h-[44px]"
+                                >
+                                    <Navigation size={14} />
+                                    Track Live
+                                </button>
+                            </motion.div>
+                        ))}
 
-                    {
-                        buses.length === 0 && (
+                        {!loading && buses.length === 0 && (
                             <div className="col-span-full text-center py-20 text-gray-400">
                                 <p>No buses found matching your search.</p>
                             </div>
-                        )
-                    }
-                </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

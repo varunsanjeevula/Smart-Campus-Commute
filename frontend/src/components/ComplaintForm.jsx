@@ -10,7 +10,7 @@ const ComplaintForm = ({ busId }) => {
     const [type, setType] = useState('Driving');
     const [description, setDescription] = useState('');
     const [files, setFiles] = useState([]);
-    const [status, setStatus] = useState(null); // null, 'loading', 'success', 'error'
+    const [status, setStatus] = useState(null);
     const [complaintId, setComplaintId] = useState(null);
 
     const handleFileChange = (e) => {
@@ -50,19 +50,19 @@ const ComplaintForm = ({ busId }) => {
     };
 
     if (status === 'success') return (
-        <div className="bg-green-50 text-green-700 p-6 rounded-xl flex flex-col items-center gap-3 animate-fade-in text-center">
+        <div className="bg-green-50 text-green-700 p-5 sm:p-6 rounded-xl flex flex-col items-center gap-3 animate-fade-in text-center">
             <div className="bg-green-100 p-3 rounded-full">
                 <CheckCircle size={32} />
             </div>
             <h3 className="font-bold text-lg">Report Submitted!</h3>
             <p>Your Complaint Reference ID:</p>
-            <div className="bg-white px-4 py-2 rounded-lg border border-green-200 font-mono font-bold select-all">
+            <div className="bg-white px-4 py-2 rounded-lg border border-green-200 font-mono font-bold select-all text-sm break-all">
                 {complaintId}
             </div>
             <p className="text-xs text-green-600">Save this ID to track your status.</p>
             <button
                 onClick={() => setStatus(null)}
-                className="text-sm font-bold underline mt-2"
+                className="text-sm font-bold underline mt-2 min-h-[44px]"
             >
                 Submit New Report
             </button>
@@ -70,24 +70,24 @@ const ComplaintForm = ({ busId }) => {
     );
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
-            <div className="flex items-center gap-3 mb-6">
+        <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-lg border border-gray-100 relative overflow-hidden">
+            <div className="flex items-center gap-3 mb-4 sm:mb-6">
                 <div className="bg-red-50 p-2 rounded-lg text-red-500">
-                    <AlertTriangle size={24} />
+                    <AlertTriangle size={22} />
                 </div>
-                <h3 className="font-bold text-xl text-dark">Report an Issue</h3>
+                <h3 className="font-bold text-lg sm:text-xl text-dark">Report an Issue</h3>
             </div>
 
             {!user ? (
-                <div className="text-center py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                <div className="text-center py-6 sm:py-8 bg-gray-50 rounded-xl border border-dashed border-gray-200">
                     <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 shadow-sm text-gray-400">
                         <Lock size={20} />
                     </div>
                     <h4 className="font-bold text-dark mb-1">Authentication Required</h4>
-                    <p className="text-sm text-gray-500 mb-4 px-4">You need to be logged in to file a complaint or report an issue.</p>
+                    <p className="text-sm text-gray-500 mb-4 px-4">You need to be logged in to file a complaint.</p>
                     <button
                         onClick={() => navigate('/login')}
-                        className="bg-primary text-white px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition duration-300 shadow-lg shadow-blue-500/20"
+                        className="bg-primary text-white px-6 py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300 shadow-lg shadow-blue-500/20 min-h-[48px]"
                     >
                         Login / Sign Up
                     </button>
@@ -97,7 +97,7 @@ const ComplaintForm = ({ busId }) => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
                         <select
-                            className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none"
+                            className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none min-h-[48px] text-base"
                             value={type}
                             onChange={(e) => setType(e.target.value)}
                         >
@@ -112,7 +112,7 @@ const ComplaintForm = ({ busId }) => {
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea
-                            className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
+                            className="w-full border border-gray-200 bg-gray-50 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none text-base"
                             placeholder="Please describe the issue in detail..."
                             rows="4"
                             value={description}
@@ -123,7 +123,7 @@ const ComplaintForm = ({ busId }) => {
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Attach Evidence</label>
-                        <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-colors text-center cursor-pointer">
+                        <div className="relative border-2 border-dashed border-gray-200 rounded-xl p-5 sm:p-4 hover:bg-gray-50 transition-colors text-center cursor-pointer">
                             <input
                                 type="file"
                                 multiple
@@ -142,7 +142,7 @@ const ComplaintForm = ({ busId }) => {
 
                     <button
                         disabled={status === 'loading'}
-                        className="w-full bg-red-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-600 transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/20 disabled:opacity-70"
+                        className="w-full bg-red-500 text-white px-6 py-3.5 rounded-xl font-bold hover:bg-red-600 transition-all flex items-center justify-center gap-2 shadow-lg shadow-red-500/20 disabled:opacity-70 min-h-[52px]"
                     >
                         {status === 'loading' ? 'Submitting...' : (
                             <>
@@ -153,7 +153,6 @@ const ComplaintForm = ({ busId }) => {
                     {status === 'error' && <p className="text-red-500 text-sm text-center mt-2">Failed to submit complaint.</p>}
                 </form>
             )}
-
         </div>
     );
 };

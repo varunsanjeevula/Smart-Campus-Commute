@@ -8,7 +8,7 @@ const TrackComplaint = () => {
     const { id } = useParams();
     const [searchId, setSearchId] = useState(id || '');
     const [complaint, setComplaint] = useState(null);
-    const [status, setStatus] = useState('idle'); // idle, loading, success, error
+    const [status, setStatus] = useState('idle');
 
     const fetchComplaint = async (complaintId) => {
         if (!complaintId) return;
@@ -34,28 +34,28 @@ const TrackComplaint = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
             <div className="max-w-2xl mx-auto">
-                <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-dark mb-6">
+                <Link to="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-dark mb-4 sm:mb-6 min-h-[44px]">
                     <ArrowLeft size={20} /> Back to Home
                 </Link>
 
-                <div className="bg-white rounded-3xl p-8 shadow-xl mb-8">
-                    <h1 className="text-3xl font-bold text-dark mb-2">Track Complaint</h1>
-                    <p className="text-gray-500 mb-6">Enter your Reference ID to check status.</p>
+                <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl mb-6 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-dark mb-1 sm:mb-2">Track Complaint</h1>
+                    <p className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base">Enter your Reference ID to check status.</p>
 
                     <form onSubmit={handleSearch} className="relative">
                         <input
                             type="text"
                             placeholder="e.g. 67a65..."
-                            className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono"
+                            className="w-full pl-11 sm:pl-12 pr-24 sm:pr-28 py-3.5 sm:py-4 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-mono text-sm sm:text-base min-h-[48px]"
                             value={searchId}
                             onChange={(e) => setSearchId(e.target.value)}
                         />
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                        <Search className="absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         <button
                             type="submit"
-                            className="absolute right-2 top-2 bottom-2 bg-dark text-white px-6 rounded-lg font-bold hover:bg-black transition-colors"
+                            className="absolute right-2 top-2 bottom-2 bg-dark text-white px-4 sm:px-6 rounded-lg font-bold hover:bg-black transition-colors text-sm min-h-[40px]"
                         >
                             Track
                         </button>
@@ -70,7 +70,7 @@ const TrackComplaint = () => {
                 )}
 
                 {status === 'error' && (
-                    <div className="bg-red-50 text-red-600 p-6 rounded-2xl text-center border border-red-100">
+                    <div className="bg-red-50 text-red-600 p-5 sm:p-6 rounded-2xl text-center border border-red-100">
                         <AlertTriangle size={32} className="mx-auto mb-2" />
                         <h3 className="font-bold text-lg">Complaint Not Found</h3>
                         <p className="text-sm">Please check the ID and try again.</p>
@@ -81,52 +81,52 @@ const TrackComplaint = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100"
+                        className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl border border-gray-100"
                     >
-                        <div className="flex justify-between items-start mb-6">
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4 sm:mb-6">
                             <div>
-                                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Reference ID</span>
-                                <h2 className="font-mono font-bold text-xl text-dark select-all">{complaint._id}</h2>
+                                <span className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Reference ID</span>
+                                <h2 className="font-mono font-bold text-base sm:text-xl text-dark select-all break-all">{complaint._id}</h2>
                             </div>
-                            <div className={`px-4 py-2 rounded-full font-bold text-sm uppercase tracking-wide ${complaint.status === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                            <div className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-bold text-xs sm:text-sm uppercase tracking-wide self-start ${complaint.status === 'resolved' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                                 }`}>
                                 {complaint.status}
                             </div>
                         </div>
 
-                        <div className="space-y-6">
-                            <div className="flex gap-4 items-start">
-                                <div className="bg-blue-50 p-3 rounded-xl text-blue-600">
-                                    <FileText size={24} />
+                        <div className="space-y-5 sm:space-y-6">
+                            <div className="flex gap-3 sm:gap-4 items-start">
+                                <div className="bg-blue-50 p-2.5 sm:p-3 rounded-xl text-blue-600 shrink-0">
+                                    <FileText size={20} className="sm:w-6 sm:h-6" />
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-dark">Description</h4>
-                                    <p className="text-gray-600 leading-relaxed mt-1">
+                                <div className="min-w-0">
+                                    <h4 className="font-bold text-dark text-sm sm:text-base">Description</h4>
+                                    <p className="text-gray-600 leading-relaxed mt-1 text-sm">
                                         {complaint.description}
                                     </p>
-                                    <div className="mt-2 text-xs font-bold text-gray-400 bg-gray-50 inline-block px-2 py-1 rounded">
+                                    <div className="mt-2 text-[10px] sm:text-xs font-bold text-gray-400 bg-gray-50 inline-block px-2 py-1 rounded">
                                         Type: {complaint.type}
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex gap-4 items-start border-t border-gray-100 pt-6">
-                                <div className="bg-purple-50 p-3 rounded-xl text-purple-600">
-                                    <Clock size={24} />
+                            <div className="flex gap-3 sm:gap-4 items-start border-t border-gray-100 pt-5 sm:pt-6">
+                                <div className="bg-purple-50 p-2.5 sm:p-3 rounded-xl text-purple-600 shrink-0">
+                                    <Clock size={20} className="sm:w-6 sm:h-6" />
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-dark">Timeline</h4>
+                                    <h4 className="font-bold text-dark text-sm sm:text-base">Timeline</h4>
                                     <div className="mt-2 space-y-3">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                            <p className="text-sm text-gray-600">
+                                            <div className="w-2 h-2 rounded-full bg-green-500 shrink-0"></div>
+                                            <p className="text-xs sm:text-sm text-gray-600">
                                                 Submitted on <span className="font-bold">{new Date(complaint.createdAt).toLocaleDateString()}</span>
                                             </p>
                                         </div>
                                         {complaint.status === 'resolved' && (
                                             <div className="flex items-center gap-3">
-                                                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                                                <p className="text-sm text-gray-600">
+                                                <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0"></div>
+                                                <p className="text-xs sm:text-sm text-gray-600">
                                                     Resolved on <span className="font-bold">{new Date(complaint.updatedAt).toLocaleDateString()}</span>
                                                 </p>
                                             </div>
@@ -136,9 +136,9 @@ const TrackComplaint = () => {
                             </div>
 
                             {complaint.media && complaint.media.length > 0 && (
-                                <div className="border-t border-gray-100 pt-6">
-                                    <h4 className="font-bold text-dark mb-4">Attached Evidence</h4>
-                                    <div className="grid grid-cols-2 gap-4">
+                                <div className="border-t border-gray-100 pt-5 sm:pt-6">
+                                    <h4 className="font-bold text-dark mb-3 sm:mb-4 text-sm sm:text-base">Attached Evidence</h4>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                         {complaint.media.map((file, i) => (
                                             <a key={i} href={`http://localhost:5000${file}`} target="_blank" rel="noopener noreferrer" className="block relative group overflow-hidden rounded-xl border border-gray-200">
                                                 {file.match(/\.(mp4|mov|avi)$/i) ? (

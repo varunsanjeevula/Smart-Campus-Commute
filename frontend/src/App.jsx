@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Header from './components/Header';
+import BottomNav from './components/BottomNav';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import TrackBus from './pages/TrackBus';
@@ -15,7 +16,7 @@ function App() {
       <AuthProvider>
         <div className="min-h-screen bg-gray-50 flex flex-col">
           <Header />
-          <main className="flex-grow">
+          <main className="flex-grow has-bottom-nav">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/live-map" element={<LiveTracking />} />
@@ -28,9 +29,10 @@ function App() {
               <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </main>
-          <footer className="bg-dark text-white text-center py-4">
+          <footer className="bg-dark text-white text-center py-4 hidden md:block">
             &copy; {new Date().getFullYear()} Smart Bus Tracker. All rights reserved.
           </footer>
+          <BottomNav />
         </div>
       </AuthProvider>
     </Router>

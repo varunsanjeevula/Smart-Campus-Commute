@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import AuthContext from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
-import { Plus, Trash2, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import { Plus, Trash2, CheckCircle, AlertCircle, XCircle, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import DashboardHome from './admin/DashboardHome';
 import BusManagement from './admin/BusManagement';
@@ -16,6 +16,7 @@ const AdminDashboard = () => {
     const { user, loading: authLoading } = useContext(AuthContext);
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
         if (!authLoading && (!user || user.role !== 'admin')) {
@@ -27,13 +28,27 @@ const AdminDashboard = () => {
 
     return (
         <div className="flex bg-gray-50 min-h-screen">
-            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Sidebar
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                isOpen={sidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+            />
 
-            <main className="flex-1 p-8 overflow-y-auto h-screen">
-                <header className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-dark mb-1">Dashboard</h1>
-                        <p className="text-gray-500">Welcome back, {user.name}</p>
+            <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto min-h-screen">
+                <header className="flex justify-between items-center mb-6 sm:mb-8 gap-4">
+                    <div className="flex items-center gap-3">
+                        {/* Mobile hamburger for sidebar */}
+                        <button
+                            onClick={() => setSidebarOpen(true)}
+                            className="lg:hidden p-2 text-gray-600 hover:text-gray-900 bg-white rounded-lg shadow-sm border border-gray-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                        >
+                            <Menu size={22} />
+                        </button>
+                        <div>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-dark mb-0.5 sm:mb-1">Dashboard</h1>
+                            <p className="text-gray-500 text-sm sm:text-base">Welcome back, {user.name}</p>
+                        </div>
                     </div>
                 </header>
 

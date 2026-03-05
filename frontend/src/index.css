@@ -110,3 +110,32 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
+
+/* QR Scanner — override Html5Qrcode inline styles */
+#qr-reader-container {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+}
+
+#qr-reader-container video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+#qr-reader-container img[alt="Info icon"],
+#qr-reader-container br,
+#qr-reader-container span {
+  display: none !important;
+}
+
+/* Hide the library's internal scan region box */
+#qr-shaded-region {
+  display: none !important;
+}

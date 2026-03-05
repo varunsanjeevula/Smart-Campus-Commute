@@ -49,8 +49,19 @@ const Home = () => {
 
         setScannerError(null);
         let html5Qr = null;
+        let cancelled = false;
 
         const startScanner = async () => {
+            // Wait for DOM element to be rendered by AnimatePresence
+            await new Promise(resolve => setTimeout(resolve, 500));
+            if (cancelled) return;
+
+            const container = document.getElementById("qr-reader-container");
+            if (!container) {
+                setScannerError("Scanner failed to initialize. Please try again.");
+                return;
+            }
+
             try {
                 html5Qr = new Html5Qrcode("qr-reader-container");
                 scannerRef.current = html5Qr;
@@ -58,10 +69,8 @@ const Home = () => {
                 await html5Qr.start(
                     { facingMode: "environment" }, // auto-select back camera
                     {
-                        fps: 15,
-                        qrbox: { width: 250, height: 250 },
-                        aspectRatio: 1.0,
-                        disableFlip: false,
+                        fps: 10,
+                        qrbox: { width: 220, height: 220 },
                     },
                     (decodedText) => {
                         // Success
@@ -78,17 +87,18 @@ const Home = () => {
                             }
                         }).catch(console.error);
                     },
-                    () => { } // Ignore scan errors (no QR found yet)
+                    () => { } // Ignore per-frame scan misses
                 );
             } catch (err) {
                 console.error("Camera error:", err);
-                setScannerError("Unable to access camera. Please allow camera permissions.");
+                setScannerError("Unable to access camera. Please allow camera permissions and ensure you're on HTTPS.");
             }
         };
 
         startScanner();
 
         return () => {
+            cancelled = true;
             if (scannerRef.current) {
                 scannerRef.current.stop().then(() => {
                     scannerRef.current.clear();

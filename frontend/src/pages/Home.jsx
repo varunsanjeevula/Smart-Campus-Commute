@@ -213,87 +213,116 @@ const Home = () => {
                 </div>
             )}
 
-            {/* QR Scanner — Professional Full-Screen Overlay */}
+            {/* QR Scanner — Full Screen */}
             <AnimatePresence>
                 {showScanner && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[70] bg-black flex flex-col"
+                        className="fixed inset-0 z-[70] bg-black"
+                        style={{ display: 'flex', flexDirection: 'column' }}
                     >
-                        {/* Scanner Header */}
-                        <div className="relative z-10 flex items-center justify-between px-4 py-4 bg-gradient-to-b from-black/80 to-transparent">
+                        {/* Header */}
+                        <div style={{
+                            position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20,
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            padding: '16px', background: 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)'
+                        }}>
                             <div>
-                                <h3 className="text-white font-bold text-lg">Scan QR Code</h3>
-                                <p className="text-white/60 text-xs">Point at a bus QR code</p>
+                                <h3 style={{ color: '#fff', fontWeight: 700, fontSize: '18px', margin: 0 }}>Scan QR Code</h3>
+                                <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', margin: '4px 0 0' }}>Point at a bus QR code</p>
                             </div>
                             <button
                                 onClick={closeScanner}
-                                className="bg-white/10 backdrop-blur-md p-2.5 rounded-full text-white hover:bg-white/20 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                                style={{
+                                    background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: '50%',
+                                    width: '44px', height: '44px', display: 'flex', alignItems: 'center',
+                                    justifyContent: 'center', cursor: 'pointer', color: '#fff'
+                                }}
                             >
                                 <X size={22} />
                             </button>
                         </div>
 
-                        {/* Camera Viewfinder */}
-                        <div className="flex-1 relative flex items-center justify-center overflow-hidden">
-                            {/* Actual camera feed renders here */}
-                            <div id="qr-reader-container" className="absolute inset-0 [&_video]:w-full [&_video]:h-full [&_video]:object-cover" />
+                        {/* Camera container — the library renders video here */}
+                        <div
+                            id="qr-reader-container"
+                            style={{
+                                position: 'absolute',
+                                top: 0, left: 0, right: 0, bottom: 0,
+                                width: '100%',
+                                height: '100%',
+                            }}
+                        />
 
-                            {/* Viewfinder Overlay */}
-                            <div className="absolute inset-0 pointer-events-none z-10">
-                                {/* Dim edges around scan box */}
-                                <div className="absolute inset-0 bg-black/50" style={{
-                                    maskImage: 'radial-gradient(ellipse 200px 200px at center, transparent 60%, black 61%)',
-                                    WebkitMaskImage: 'radial-gradient(ellipse 200px 200px at center, transparent 60%, black 61%)'
-                                }} />
+                        {/* Viewfinder corners overlay — pointer-events-none so it doesn't block */}
+                        <div style={{
+                            position: 'absolute', inset: 0, zIndex: 10,
+                            pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}>
+                            <div style={{ width: '260px', height: '260px', position: 'relative' }}>
+                                {/* Corner brackets */}
+                                <div style={{ position: 'absolute', top: 0, left: 0, width: '40px', height: '40px', borderTop: '3px solid #fff', borderLeft: '3px solid #fff', borderRadius: '12px 0 0 0' }} />
+                                <div style={{ position: 'absolute', top: 0, right: 0, width: '40px', height: '40px', borderTop: '3px solid #fff', borderRight: '3px solid #fff', borderRadius: '0 12px 0 0' }} />
+                                <div style={{ position: 'absolute', bottom: 0, left: 0, width: '40px', height: '40px', borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', borderRadius: '0 0 0 12px' }} />
+                                <div style={{ position: 'absolute', bottom: 0, right: 0, width: '40px', height: '40px', borderBottom: '3px solid #fff', borderRight: '3px solid #fff', borderRadius: '0 0 12px 0' }} />
+                                {/* Animated scan line */}
+                                <motion.div
+                                    style={{
+                                        position: 'absolute', left: '8px', right: '8px', height: '2px',
+                                        background: 'linear-gradient(to right, transparent, #60a5fa, transparent)'
+                                    }}
+                                    animate={{ top: ['10%', '90%', '10%'] }}
+                                    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                                />
+                            </div>
+                        </div>
 
-                                {/* Scan box corners */}
-                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px]">
-                                    {/* Top-left */}
-                                    <div className="absolute top-0 left-0 w-10 h-10 border-t-[3px] border-l-[3px] border-white rounded-tl-xl" />
-                                    {/* Top-right */}
-                                    <div className="absolute top-0 right-0 w-10 h-10 border-t-[3px] border-r-[3px] border-white rounded-tr-xl" />
-                                    {/* Bottom-left */}
-                                    <div className="absolute bottom-0 left-0 w-10 h-10 border-b-[3px] border-l-[3px] border-white rounded-bl-xl" />
-                                    {/* Bottom-right */}
-                                    <div className="absolute bottom-0 right-0 w-10 h-10 border-b-[3px] border-r-[3px] border-white rounded-br-xl" />
+                        {/* Footer */}
+                        <div style={{
+                            position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 20,
+                            textAlign: 'center', padding: '24px',
+                            background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)'
+                        }}>
+                            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '14px', fontWeight: 500, margin: '0 0 4px' }}>
+                                Align QR code within the frame
+                            </p>
+                            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '12px', margin: 0 }}>
+                                Scanning will happen automatically
+                            </p>
+                        </div>
 
-                                    {/* Animated scan line */}
-                                    <motion.div
-                                        className="absolute left-2 right-2 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent"
-                                        animate={{ top: ['10%', '90%', '10%'] }}
-                                        transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-                                    />
+                        {/* Error overlay */}
+                        {scannerError && (
+                            <div style={{
+                                position: 'absolute', inset: 0, zIndex: 30,
+                                background: 'rgba(0,0,0,0.85)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', padding: '24px'
+                            }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <div style={{
+                                        width: '64px', height: '64px', background: 'rgba(239,68,68,0.2)',
+                                        borderRadius: '50%', display: 'flex', alignItems: 'center',
+                                        justifyContent: 'center', margin: '0 auto 16px'
+                                    }}>
+                                        <X size={32} style={{ color: '#f87171' }} />
+                                    </div>
+                                    <h4 style={{ color: '#fff', fontWeight: 700, fontSize: '18px', margin: '0 0 8px' }}>Camera Error</h4>
+                                    <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', margin: '0 0 24px' }}>{scannerError}</p>
+                                    <button
+                                        onClick={closeScanner}
+                                        style={{
+                                            background: '#fff', color: '#000', border: 'none',
+                                            padding: '12px 24px', borderRadius: '12px',
+                                            fontWeight: 700, fontSize: '14px', cursor: 'pointer', minHeight: '48px'
+                                        }}
+                                    >
+                                        Go Back
+                                    </button>
                                 </div>
                             </div>
-
-                            {/* Error message */}
-                            {scannerError && (
-                                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/80 p-6">
-                                    <div className="text-center">
-                                        <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <X size={32} className="text-red-400" />
-                                        </div>
-                                        <h4 className="text-white font-bold text-lg mb-2">Camera Error</h4>
-                                        <p className="text-white/60 text-sm mb-6">{scannerError}</p>
-                                        <button
-                                            onClick={closeScanner}
-                                            className="bg-white text-black px-6 py-3 rounded-xl font-bold min-h-[48px]"
-                                        >
-                                            Go Back
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Scanner Footer */}
-                        <div className="relative z-10 px-6 py-6 bg-gradient-to-t from-black/80 to-transparent text-center">
-                            <p className="text-white/80 text-sm font-medium mb-1">Align QR code within the frame</p>
-                            <p className="text-white/40 text-xs">Scanning will happen automatically</p>
-                        </div>
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
